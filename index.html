@@ -43,6 +43,7 @@
             transition: transform 0.5s ease, box-shadow 0.5s ease;
             position: relative;
             overflow: hidden;
+            
         }
 
         .message-box::before {
@@ -256,6 +257,12 @@
             }
         }
 
+        @keyframes gradientBG {
+            0% { background-position: 0% 50% }
+            50% { background-position: 100% 50% }
+            100% { background-position: 0% 50% }
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 2rem;
@@ -297,12 +304,23 @@
     </div>
 
     <script>
-        // Add floating animation to each letter
-        document.querySelectorAll('h1 span').forEach((span, index) => {
-            span.style.animationDelay = `${index * 0.1}s`;
+        // Initialize the page when DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeAnimations();
+            createParticles();
+            add3DEffect();
+            setupEventListeners();
         });
 
-        // Create particles
+        // Setup all animations and initial styles
+        function initializeAnimations() {
+            // Add floating animation to each letter with proper delay
+            document.querySelectorAll('h1 span').forEach((span, index) => {
+                span.style.animationDelay = `${index * 0.1}s`;
+            });
+        }
+
+        // Create particles for background effect
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
             const particleCount = 50;
@@ -316,7 +334,7 @@
                 particle.style.borderRadius = '50%';
                 particle.style.top = `${Math.random() * 100}%`;
                 particle.style.left = `${Math.random() * 100}%`;
-                particle.style.animation = `float ${Math.random() * 5 + 5}s linear infinite`;
+                
                 particlesContainer.appendChild(particle);
                 
                 // Set random animation
@@ -336,7 +354,7 @@
             }
         }
 
-        // 3D effect on message box
+        // Add 3D effect to message box
         function add3DEffect() {
             const messageBox = document.getElementById('messageBox');
             document.addEventListener('mousemove', (e) => {
@@ -346,35 +364,233 @@
             });
         }
 
-        // Button click handler
-        document.getElementById('actionButton').addEventListener('click', () => {
-            document.getElementById('modal').classList.add('show');
-            document.getElementById('messageBox').classList.add('shake');
-            setTimeout(() => {
-                document.getElementById('messageBox').classList.remove('shake');
-            }, 500);
-        });
+        // Setup all event listeners
+        function setupEventListeners() {
+            const messageBox = document.getElementById('messageBox');
+            const modal = document.getElementById('modal');
+            const mainText = document.getElementById('mainText');
+            const alternateText = document.getElementById('alternateText');
+            const actionButton = document.getElementById('actionButton');
+            const closeModalButton = document.getElementById('closeModal');
+            const confirmButton = document.getElementById('confirmButton');
 
-        // Close modal
-        document.getElementById('closeModal').addEventListener('click', () => {
-            document.getElementById('modal').classList.remove('show');
-        });
+            // Button click handler
+            actionButton.addEventListener('click', () => {
+                modal.classList.add('show');
+                messageBox.classList.add('shake');
+                setTimeout(() => {
+                    messageBox.classList.remove('shake');
+                }, 500);
+            });
 
-        // Confirm button handler
-        document.getElementById('confirmButton').addEventListener('click', () => {
-            document.getElementById('modal').classList.remove('show');
+            // Close modal button
+            closeModalButton.addEventListener('click', () => {
+                modal.classList.remove('show');
+            });
+
+            // Confirm button handler with fixed behavior
+            confirmButton.addEventListener('click', () => {
+                modal.classList.remove('show');
+                
+                // Random behavior selection
+                const randomBehavior = Math.floor(Math.random() * 4);
+                
+                switch(randomBehavior) {
+                    case 0:
+                        // Show alternate text
+                        mainText.style.display = 'none';
+                        alternateText.style.display = 'block';
+                        alternateText.classList.add('blink');
+                        setTimeout(() => {
+                            alternateText.classList.remove('blink');
+                            mainText.style.display = 'block';
+                            alternateText.style.display = 'none';
+                        }, 3000);
+                        break;
+                    case 1:
+                        // Change colors
+                        document.documentElement.style.setProperty('--primary-color', '#00ff00');
+                        document.documentElement.style.setProperty('--secondary-color', '#ff00ff');
+                        document.documentElement.style.setProperty('--bg-color', '#000033');
+                        setTimeout(() => {
+                            document.documentElement.style.setProperty('--primary-color', '#ff3e3e');
+                            document.documentElement.style.setProperty('--secondary-color', '#3e3eff');
+                            document.documentElement.style.setProperty('--bg-color', '#1a1a1a');
+                        }, 3000);
+                        break;
+                    case 2:
+                        // Shake effect
+                        for (let i = 0; i < 3; i++) {
+                            setTimeout(() => {
+                                messageBox.classList.add('shake');
+                                setTimeout(() => {
+                                    messageBox.classList.remove('shake');
+                                }, 500);
+                            }, i * 1000);
+                        }
+                        break;
+                    case 3:
+                        // Zoom effect - fixed to work with 3D effect
+                        const originalTransform = messageBox.style.transform;
+                        messageBox.style.transform = 'scale(1.2)';
+                        setTimeout(() => {
+                            // Reset to original transform or default
+                            messageBox.style.transform = originalTransform || 'scale(1)';
+                        }, 1000);
+                        break;
+                }
+            });
+
+            // Setup Konami code
+            setupKonamiCode();
             
-            // Redirect to another page after 1 second
-            setTimeout(() => {
-                window.location.href = 'redirect.html'; // Change this to your desired URL
-            }, 1000);
-        });
+            // Add right-click handler
+            document.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                messageBox.classList.add('shake');
+                setTimeout(() => {
+                    messageBox.classList.remove('shake');
+                }, 500);
+                return false;
+            });
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            createParticles();
-            add3DEffect();
-        });
+            // Add custom cursor
+            setupCustomCursor();
+            
+            // Setup message rotation
+            setupMessageRotation();
+            
+            // Setup mobile-specific features
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                setupMobileFeatures();
+            }
+        }
+
+        // Setup Konami code easter egg
+        function setupKonamiCode() {
+            const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+            let konamiIndex = 0;
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === konamiCode[konamiIndex]) {
+                    konamiIndex++;
+                    if (konamiIndex === konamiCode.length) {
+                        // Activate easter egg
+                        const mainText = document.getElementById('mainText');
+                        
+                        document.body.style.background = 'linear-gradient(45deg, #ff0000, #00ff00, #0000ff)';
+                        document.body.style.backgroundSize = '600% 600%';
+                        document.body.style.animation = 'gradientBG 10s ease infinite';
+                        
+                        mainText.innerHTML = 'You found the secret!';
+                        mainText.style.fontSize = '4rem';
+                        mainText.style.color = '#ffff00';
+                        
+                        // Reset after 5 seconds
+                        setTimeout(() => {
+                            document.body.style.background = 'var(--bg-color)';
+                            document.body.style.animation = '';
+                            
+                            // Properly reset the main text with spans
+                            mainText.innerHTML = '<span>I</span> <span>don\'t</span> <span>make</span> <span>video</span> <span>calls</span> <span>with</span> <span>girls</span>';
+                            mainText.style.fontSize = '3rem';
+                            mainText.style.color = 'var(--text-color)';
+                            
+                            // Re-initialize the animation delays for spans
+                            document.querySelectorAll('h1 span').forEach((span, index) => {
+                                span.style.animationDelay = `${index * 0.1}s`;
+                            });
+                        }, 5000);
+                        
+                        konamiIndex = 0;
+                    }
+                } else {
+                    konamiIndex = 0;
+                }
+            });
+        }
+
+        // Setup custom cursor
+        function setupCustomCursor() {
+            const cursor = document.createElement('div');
+            cursor.style.position = 'fixed';
+            cursor.style.width = '20px';
+            cursor.style.height = '20px';
+            cursor.style.borderRadius = '50%';
+            cursor.style.border = '2px solid var(--primary-color)';
+            cursor.style.pointerEvents = 'none';
+            cursor.style.transform = 'translate(-50%, -50%)';
+            cursor.style.zIndex = '9999';
+            cursor.style.transition = 'width 0.3s, height 0.3s, border-color 0.3s';
+            document.body.appendChild(cursor);
+
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.top = `${e.clientY}px`;
+                cursor.style.left = `${e.clientX}px`;
+            });
+
+            document.addEventListener('mousedown', () => {
+                cursor.style.width = '15px';
+                cursor.style.height = '15px';
+                cursor.style.borderColor = 'var(--secondary-color)';
+            });
+
+            document.addEventListener('mouseup', () => {
+                cursor.style.width = '20px';
+                cursor.style.height = '20px';
+                cursor.style.borderColor = 'var(--primary-color)';
+            });
+        }
+
+        // Setup message rotation
+        function setupMessageRotation() {
+            const alternativeMessages = [
+                "I don't make video calls with girls",
+                "Video calls? No thanks!",
+                "Girls? Video calls? Nope.",
+                "My camera is broken for girls only",
+                "Video calling girls is not my thing"
+            ];
+
+            // Change message every minute
+            setInterval(() => {
+                const randomIndex = Math.floor(Math.random() * alternativeMessages.length);
+                const message = alternativeMessages[randomIndex];
+                const mainText = document.getElementById('mainText');
+                
+                // Create spans for each word
+                const spans = message.split(' ').map(word => `<span>${word}</span>`).join(' ');
+                mainText.innerHTML = spans;
+                
+                // Re-initialize animation delays
+                document.querySelectorAll('h1 span').forEach((span, index) => {
+                    span.style.animationDelay = `${index * 0.1}s`;
+                });
+            }, 60000);
+        }
+
+        // Setup mobile-specific features
+        function setupMobileFeatures() {
+            const actionButton = document.getElementById('actionButton');
+            const messageBox = document.getElementById('messageBox');
+            
+            // Add vibration on mobile when button is clicked
+            actionButton.addEventListener('click', () => {
+                if (navigator.vibrate) {
+                    navigator.vibrate([100, 50, 100]);
+                }
+            });
+            
+            // Add device orientation effect
+            window.addEventListener('deviceorientation', (e) => {
+                if (e.beta !== null && e.gamma !== null) {
+                    const tiltX = e.beta / 5; // Convert to a smaller range
+                    const tiltY = e.gamma / 5;
+                    
+                    messageBox.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+                }
+            });
+        }
     </script>
 </body>
 </html>
