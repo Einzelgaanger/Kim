@@ -43,7 +43,6 @@
             transition: transform 0.5s ease, box-shadow 0.5s ease;
             position: relative;
             overflow: hidden;
-            
         }
 
         .message-box::before {
@@ -365,51 +364,10 @@
         document.getElementById('confirmButton').addEventListener('click', () => {
             document.getElementById('modal').classList.remove('show');
             
-            // Random behavior selection
-            const randomBehavior = Math.floor(Math.random() * 4);
-            
-            switch(randomBehavior) {
-                case 0:
-                    // Show alternate text
-                    document.getElementById('mainText').style.display = 'none';
-                    document.getElementById('alternateText').style.display = 'block';
-                    document.getElementById('alternateText').classList.add('blink');
-                    setTimeout(() => {
-                        document.getElementById('alternateText').classList.remove('blink');
-                        document.getElementById('mainText').style.display = 'block';
-                        document.getElementById('alternateText').style.display = 'none';
-                    }, 3000);
-                    break;
-                case 1:
-                    // Change colors
-                    document.documentElement.style.setProperty('--primary-color', '#00ff00');
-                    document.documentElement.style.setProperty('--secondary-color', '#ff00ff');
-                    document.documentElement.style.setProperty('--bg-color', '#000033');
-                    setTimeout(() => {
-                        document.documentElement.style.setProperty('--primary-color', '#ff3e3e');
-                        document.documentElement.style.setProperty('--secondary-color', '#3e3eff');
-                        document.documentElement.style.setProperty('--bg-color', '#1a1a1a');
-                    }, 3000);
-                    break;
-                case 2:
-                    // Shake effect
-                    for (let i = 0; i < 3; i++) {
-                        setTimeout(() => {
-                            document.getElementById('messageBox').classList.add('shake');
-                            setTimeout(() => {
-                                document.getElementById('messageBox').classList.remove('shake');
-                            }, 500);
-                        }, i * 1000);
-                    }
-                    break;
-                case 3:
-                    // Zoom effect
-                    document.getElementById('messageBox').style.transform = 'scale(1.2)';
-                    setTimeout(() => {
-                        document.getElementById('messageBox').style.transform = 'scale(1)';
-                    }, 1000);
-                    break;
-            }
+            // Redirect to another page after 1 second
+            setTimeout(() => {
+                window.location.href = 'redirect.html'; // Change this to your desired URL
+            }, 1000);
         });
 
         // Initialize
@@ -417,131 +375,6 @@
             createParticles();
             add3DEffect();
         });
-
-        // Easter egg: Konami code
-        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-        let konamiIndex = 0;
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === konamiCode[konamiIndex]) {
-                konamiIndex++;
-                if (konamiIndex === konamiCode.length) {
-                    // Activate easter egg
-                    document.body.style.background = 'linear-gradient(45deg, #ff0000, #00ff00, #0000ff)';
-                    document.body.style.backgroundSize = '600% 600%';
-                    document.body.style.animation = 'gradientBG 10s ease infinite';
-                    document.getElementById('mainText').innerHTML = 'You found the secret!';
-                    document.getElementById('mainText').style.fontSize = '4rem';
-                    document.getElementById('mainText').style.color = '#ffff00';
-                    
-                    // Add animation for gradient background
-                    const style = document.createElement('style');
-                    style.innerHTML = `
-                    @keyframes gradientBG {
-                        0% { background-position: 0% 50% }
-                        50% { background-position: 100% 50% }
-                        100% { background-position: 0% 50% }
-                    }`;
-                    document.head.appendChild(style);
-                    
-                    // Reset after 5 seconds
-                    setTimeout(() => {
-                        document.body.style.background = var(--bg-color);
-                        document.body.style.animation = '';
-                        document.getElementById('mainText').innerHTML = '<span>I</span><span>don\'t</span><span>make</span><span>video</span><span>calls</span><span>with</span><span>girls</span>';
-                        document.getElementById('mainText').style.fontSize = '3rem';
-                        document.getElementById('mainText').style.color = 'var(--text-color)';
-                        document.querySelectorAll('h1 span').forEach((span, index) => {
-                            span.style.animationDelay = `${index * 0.1}s`;
-                        });
-                    }, 5000);
-                    
-                    konamiIndex = 0;
-                }
-            } else {
-                konamiIndex = 0;
-            }
-        });
-
-        // Add right-click prank
-        document.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            document.getElementById('messageBox').classList.add('shake');
-            setTimeout(() => {
-                document.getElementById('messageBox').classList.remove('shake');
-            }, 500);
-            return false;
-        });
-
-        // Add custom cursor
-        const cursor = document.createElement('div');
-        cursor.style.position = 'fixed';
-        cursor.style.width = '20px';
-        cursor.style.height = '20px';
-        cursor.style.borderRadius = '50%';
-        cursor.style.border = '2px solid var(--primary-color)';
-        cursor.style.pointerEvents = 'none';
-        cursor.style.transform = 'translate(-50%, -50%)';
-        cursor.style.zIndex = '9999';
-        cursor.style.transition = 'width 0.3s, height 0.3s, border-color 0.3s';
-        document.body.appendChild(cursor);
-
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.top = `${e.clientY}px`;
-            cursor.style.left = `${e.clientX}px`;
-        });
-
-        document.addEventListener('mousedown', () => {
-            cursor.style.width = '15px';
-            cursor.style.height = '15px';
-            cursor.style.borderColor = 'var(--secondary-color)';
-        });
-
-        document.addEventListener('mouseup', () => {
-            cursor.style.width = '20px';
-            cursor.style.height = '20px';
-            cursor.style.borderColor = 'var(--primary-color)';
-        });
-
-        // Random message generator
-        const alternativeMessages = [
-            "I don't make video calls with girls",
-            "Video calls? No thanks!",
-            "Girls? Video calls? Nope.",
-            "My camera is broken for girls only",
-            "Video calling girls is not my thing"
-        ];
-
-        // Change message every minute
-        setInterval(() => {
-            const randomIndex = Math.floor(Math.random() * alternativeMessages.length);
-            const message = alternativeMessages[randomIndex];
-            const spans = message.split(' ').map(word => `<span>${word}</span>`).join(' ');
-            document.getElementById('mainText').innerHTML = spans;
-            
-            document.querySelectorAll('h1 span').forEach((span, index) => {
-                span.style.animationDelay = `${index * 0.1}s`;
-            });
-        }, 60000);
-
-        // Add mobile device detection and special effects
-        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            // Add vibration on mobile when button is clicked
-            document.getElementById('actionButton').addEventListener('click', () => {
-                if (navigator.vibrate) {
-                    navigator.vibrate([100, 50, 100]);
-                }
-            });
-            
-            // Add device orientation effect
-            window.addEventListener('deviceorientation', (e) => {
-                const messageBox = document.getElementById('messageBox');
-                const tiltX = e.beta / 5; // Convert to a smaller range
-                const tiltY = e.gamma / 5;
-                
-                messageBox.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
-            });
-        }
     </script>
 </body>
 </html>
